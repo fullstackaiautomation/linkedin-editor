@@ -419,30 +419,23 @@
         // If we have encoded content, decode and set it
         if (encodedContent && selectedDay) {
             try {
-                // Decode from base64
-                const decodedContent = atob(encodedContent);
+                // Use URL decode since we're using encodeURIComponent in n8n
+                const decodedContent = decodeURIComponent(encodedContent);
                 posts[selectedDay] = decodedContent;
-                
+        
                 // Store in localStorage for persistence
                 localStorage.setItem(`${selectedDay}-post`, decodedContent);
-                
+        
                 // Auto-switch to the specified day's tab after page loads
                 setTimeout(() => {
                     const tabButtons = document.querySelectorAll('.tab-button');
                     const tabIndex = selectedDay === 'monday' ? 0 : selectedDay === 'wednesday' ? 1 : 2;
                     if (tabButtons[tabIndex]) {
-                        tabButtons[tabIndex].click();
+                    tabButtons[tabIndex].click();
                     }
                 }, 100);
             } catch (e) {
                 console.error('Error decoding content:', e);
-                // If decoding fails, try URL decode as fallback
-                try {
-                    posts[selectedDay] = decodeURIComponent(encodedContent);
-                    localStorage.setItem(`${selectedDay}-post`, posts[selectedDay]);
-                } catch (e2) {
-                    console.error('Fallback decode also failed:', e2);
-                }
             }
         }
 
