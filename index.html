@@ -409,10 +409,10 @@
         
         // Initialize posts from URL parameters or localStorage
         const posts = {
-            monday: urlParams.get('monday') || localStorage.getItem('monday-post') || '',
-            wednesday: urlParams.get('wednesday') || localStorage.getItem('wednesday-post') || '',
-            friday: urlParams.get('friday') || localStorage.getItem('friday-post') || ''
-        };
+        monday: decodeURIComponent(urlParams.get('monday') || '') || localStorage.getItem('monday-post') || '',
+        wednesday: decodeURIComponent(urlParams.get('wednesday') || '') || localStorage.getItem('wednesday-post') || '',
+        friday: decodeURIComponent(urlParams.get('friday') || '') || localStorage.getItem('friday-post') || ''
+};
 
         // Initialize the editor
         function init() {
