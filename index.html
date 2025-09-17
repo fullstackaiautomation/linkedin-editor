@@ -404,15 +404,33 @@
         const webhookUrl = 'https://your-n8n-instance.com/webhook/linkedin-content-updates';
         
         // Get URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const weekStart = urlParams.get('week') || new Date().toISOString();
-        
-        // Initialize posts from URL parameters or localStorage
-        const posts = {
-        monday: decodeURIComponent(urlParams.get('monday') || '') || localStorage.getItem('monday-post') || '',
-        wednesday: decodeURIComponent(urlParams.get('wednesday') || '') || localStorage.getItem('wednesday-post') || '',
-        friday: decodeURIComponent(urlParams.get('friday') || '') || localStorage.getItem('friday-post') || ''
+    const urlParams = new URLSearchParams(window.location.search);
+    const weekStart = urlParams.get('week') || new Date().toISOString();
+    const selectedDay = urlParams.get('day');
+    const encodedContent = urlParams.get('content');
+
+    // Initialize posts from URL parameters or localStorage
+    let posts = {
+    monday: localStorage.getItem('monday-post') || '',
+    wednesday: localStorage.getItem('wednesday-post') || '',
+    friday: localStorage.getItem('friday-post') || ''
 };
+
+// If we have encoded content, decode and set it
+if (encodedContent && selectedDay) {
+    try {
+        const decodedContent = atob(encodedContent);
+        posts[selectedDay] = decodedContent;
+        
+        // Auto-switch to the specified day's tab
+        setTimeout(() => {
+            const tabButton = document.querySelector(`.tab-button:nth-child(${selectedDay === 'monday' ? 1 : selectedDay === 'wednesday' ? 2 : 3})`);
+            if (tabButton) tabButton.click();
+        }, 100);
+    } catch (e) {
+        console.error('Error decoding content:', e);
+    }
+}
 
         // Initialize the editor
         function init() {
