@@ -1,1 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedIn Post Preview & Editor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f3f2ef;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #000000;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            font-size: 16px;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab-button.active {
+            color: #0a66c2;
+            border-bottom-color: #0a66c2;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .editor-preview-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .editor-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .post-input {
+            width: 100%;
+            min-height: 300px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .char-count {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .char-count.warning {
+            color: #e47300;
+        }
+
+        .char-count.error {
+            color: #d11124;
+        }
+
+        .linkedin-preview {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.08), 0 2px 3px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .post-header {
+            padding: 12px 16px 0;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin-right: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .post-author {
+            flex: 1;
+        }
+
+        .author-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(0,0,0,0.9);
+        }
+
+        .author-title {
+            font-size: 12px;
+            color: rgba(0,0,0,0.6);
+            margin-top: 2px;
+        }
+
+        .post-content {
+            padding: 12px 16px;
+            font-size: 14px;
+            line-height: 1.42857;
+            color: rgba(0,0,0,0.9);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .hashtag {
+            color: #0a66c2;
+            font-weight: 600;
+        }
+
+        .see-more {
+            color: rgba(0,0,0,0.6);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .post-stats {
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            font-size: 12px;
+            color: rgba(0,0,0,0.6);
+        }
+
+        .engagement-bar {
+            height: 1px;
+            background: rgba(0,0,0,0.08);
+        }
+
+        .action-buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #0a66c2;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #004182;
+        }
+
+        .btn-success {
+            background: #057642;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #044d2b;
+        }
+
+        .btn-secondary {
+            background: #666;
+            color: white;
+        }
+
+        .copy-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #057642;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .status-approved {
+            background: #d4f4dd;
+            color: #057642;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>LinkedIn Content Approval Dashboard</h1>
+        <p class="subtitle">Preview and edit your AI-generated posts before publishing</p>
+        
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab('monday')">
+                Monday Post
+                <span id="monday-status" class="status-badge status-pending">Pending</span>
+            </button>
+            <button class="tab-button" onclick="switchTab('wednesday')">
+                Wednesday Post
+                <span id="wednesday-status" class="status-badge status-pending">Pending</span>
+            </button>
+            <button class="tab-button" onclick="switchTab('friday')">
+                Friday Post
+                <span id="friday-status" class="status-badge status-pending">Pending</span>
+            </button>
+        </div>
+
+        <!-- Monday Tab -->
+        <div id="monday-tab" class="tab-content active">
+            <div class="editor-preview-container">
+                <div class="editor-section">
+                    <h2 class="section-title">Edit Content</h2>
+                    <textarea id="monday-input" class="post-input" placeholder="Enter your LinkedIn post content here..."></textarea>
+                    <div id="monday-count" class="char-count">0 / 3000 characters</div>
+                </div>
+                
+                <div class="preview-section">
+                    <h2 class="section-title">LinkedIn Preview</h2>
+                    <div class="linkedin-preview">
+                        <div class="post-header">
+                            <div class="avatar">ZS</div>
+                            <div class="post-author">
+                                <div class="author-name">Zachary Stoll • 1st</div>
+                                <div class="author-title">Business Funding Specialist | Sales Strategist</div>
+                                <div class="author-title">Now • 🌐</div>
+                            </div>
+                        </div>
+                        <div id="monday-preview" class="post-content"></div>
+                        <div class="post-stats">
+                            <span>👍 ❤️ 👏 42</span>
+                            <span>8 comments • 3 reposts</span>
+                        </div>
+                        <div class="engagement-bar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wednesday Tab -->
+        <div id="wednesday-tab" class="tab-content">
+            <div class="editor-preview-container">
+                <div class="editor-section">
+                    <h2 class="section-title">Edit Content</h2>
+                    <textarea id="wednesday-input" class="post-input" placeholder="Enter your LinkedIn post content here..."></textarea>
+                    <div id="wednesday-count" class="char-count">0 / 3000 characters</div>
+                </div>
+                
+                <div class="preview-section">
+                    <h2 class="section-title">LinkedIn Preview</h2>
+                    <div class="linkedin-preview">
+                        <div class="post-header">
+                            <div class="avatar">ZS</div>
+                            <div class="post-author">
+                                <div class="author-name">Zachary Stoll • 1st</div>
+                                <div class="author-title">Business Funding Specialist | Sales Strategist</div>
+                                <div class="author-title">Now • 🌐</div>
+                            </div>
+                        </div>
+                        <div id="wednesday-preview" class="post-content"></div>
+                        <div class="post-stats">
+                            <span>👍 ❤️ 👏 42</span>
+                            <span>8 comments • 3 reposts</span>
+                        </div>
+                        <div class="engagement-bar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Friday Tab -->
+        <div id="friday-tab" class="tab-content">
+            <div class="editor-preview-container">
+                <div class="editor-section">
+                    <h2 class="section-title">Edit Content</h2>
+                    <textarea id="friday-input" class="post-input" placeholder="Enter your LinkedIn post content here..."></textarea>
+                    <div id="friday-count" class="char-count">0 / 3000 characters</div>
+                </div>
+                
+                <div class="preview-section">
+                    <h2 class="section-title">LinkedIn Preview</h2>
+                    <div class="linkedin-preview">
+                        <div class="post-header">
+                            <div class="avatar">ZS</div>
+                            <div class="post-author">
+                                <div class="author-name">Zachary Stoll • 1st</div>
+                                <div class="author-title">Business Funding Specialist | Sales Strategist</div>
+                                <div class="author-title">Now • 🌐</div>
+                            </div>
+                        </div>
+                        <div id="friday-preview" class="post-content"></div>
+                        <div class="post-stats">
+                            <span>👍 ❤️ 👏 42</span>
+                            <span>8 comments • 3 reposts</span>
+                        </div>
+                        <div class="engagement-bar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-secondary" onclick="copyCurrentPost()">Copy to Clipboard</button>
+            <button class="btn btn-primary" onclick="saveChanges()">Save Changes</button>
+            <button class="btn btn-success" onclick="approveAll()">Approve All Posts</button>
+        </div>
+    </div>
+
+    <div id="copy-notification" class="copy-notification">
+        Post copied to clipboard!
+    </div>
+
+    <script>
+        let currentTab = 'monday';
+        const webhookUrl = 'https://tgrassmick.app.n8n.cloud/webhook/linkedin-content-updates';
+        
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const weekStart = urlParams.get('week') || new Date().toISOString();
+        const selectedDay = urlParams.get('day');
+        const encodedContent = urlParams.get('content');
+
+        // Initialize posts from localStorage first
+        let posts = {
+            monday: localStorage.getItem('monday-post') || '',
+            wednesday: localStorage.getItem('wednesday-post') || '',
+            friday: localStorage.getItem('friday-post') || ''
+        };
+
+        // If we have encoded content, decode and set it
+        if (encodedContent && selectedDay) {
+            try {
+                // Decode from base64
+                const decodedContent = atob(encodedContent);
+                posts[selectedDay] = decodedContent;
+                
+                // Store in localStorage for persistence
+                localStorage.setItem(`${selectedDay}-post`, decodedContent);
+                
+                // Auto-switch to the specified day's tab after page loads
+                setTimeout(() => {
+                    const tabButtons = document.querySelectorAll('.tab-button');
+                    const tabIndex = selectedDay === 'monday' ? 0 : selectedDay === 'wednesday' ? 1 : 2;
+                    if (tabButtons[tabIndex]) {
+                        tabButtons[tabIndex].click();
+                    }
+                }, 100);
+            } catch (e) {
+                console.error('Error decoding content:', e);
+                // If decoding fails, try URL decode as fallback
+                try {
+                    posts[selectedDay] = decodeURIComponent(encodedContent);
+                    localStorage.setItem(`${selectedDay}-post`, posts[selectedDay]);
+                } catch (e2) {
+                    console.error('Fallback decode also failed:', e2);
+                }
+            }
+        }
+
+        // Initialize the editor
+        function init() {
+            ['monday', 'wednesday', 'friday'].forEach(day => {
+                const input = document.getElementById(`${day}-input`);
+                const preview = document.getElementById(`${day}-preview`);
+                const counter = document.getElementById(`${day}-count`);
+                
+                // Set initial content from posts object
+                if (posts[day]) {
+                    input.value = posts[day];
+                }
+                
+                // Update preview immediately
+                updatePreview(day);
+                updateCharCount(day);
+                
+                // Add event listener for live updates
+                input.addEventListener('input', () => {
+                    posts[day] = input.value;
+                    updatePreview(day);
+                    updateCharCount(day);
+                    localStorage.setItem(`${day}-post`, input.value);
+                });
+            });
+        }
+
+        // Update preview with proper formatting
+        function updatePreview(day) {
+            const input = document.getElementById(`${day}-input`);
+            const preview = document.getElementById(`${day}-preview`);
+            let content = input.value;
+            
+            // Truncate for preview if over 210 characters
+            let displayContent = content;
+            if (content.length > 210) {
+                displayContent = content.substring(0, 210) + '... ';
+                displayContent += '<span class="see-more">see more</span>';
+            }
+            
+            // Convert hashtags to blue
+            displayContent = displayContent.replace(/(#\w+)/g, '<span class="hashtag">$1</span>');
+            
+            // Convert line breaks
+            displayContent = displayContent.replace(/\n/g, '<br>');
+            
+            preview.innerHTML = displayContent;
+        }
+
+        // Update character count
+        function updateCharCount(day) {
+            const input = document.getElementById(`${day}-input`);
+            const counter = document.getElementById(`${day}-count`);
+            const count = input.value.length;
+            
+            counter.textContent = `${count} / 3000 characters`;
+            counter.className = 'char-count';
+            
+            if (count > 3000) {
+                counter.className = 'char-count error';
+            } else if (count > 2800) {
+                counter.className = 'char-count warning';
+            }
+        }
+
+        // Switch between tabs
+        function switchTab(day) {
+            // Update current tab
+            currentTab = day;
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${day}-tab`).classList.add('active');
+        }
+
+        // Copy current post to clipboard
+        function copyCurrentPost() {
+            const input = document.getElementById(`${currentTab}-input`);
+            navigator.clipboard.writeText(input.value).then(() => {
+                const notification = document.getElementById('copy-notification');
+                notification.style.display = 'block';
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 3000);
+            });
+        }
+
+        // Save changes to n8n webhook
+        function saveChanges() {
+            const data = {
+                monday: posts.monday,
+                wednesday: posts.wednesday,
+                friday: posts.friday,
+                weekStart: weekStart,
+                timestamp: new Date().toISOString(),
+                action: 'save'
+            };
+            
+            // Send to n8n webhook
+            fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            }).then(response => {
+                alert('Changes saved successfully!');
+            }).catch(error => {
+                console.error('Error saving:', error);
+                alert('Error saving changes. Please try again.');
+            });
+        }
+
+        // Approve all posts
+        function approveAll() {
+            ['monday', 'wednesday', 'friday'].forEach(day => {
+                document.getElementById(`${day}-status`).className = 'status-badge status-approved';
+                document.getElementById(`${day}-status`).textContent = 'Approved';
+            });
+            
+            const data = {
+                monday: posts.monday,
+                wednesday: posts.wednesday,
+                friday: posts.friday,
+                weekStart: weekStart,
+                timestamp: new Date().toISOString(),
+                action: 'approve'
+            };
+            
+            // Send approval to n8n
+            fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            }).then(response => {
+                alert('All posts approved! They will be scheduled for publishing.');
+            }).catch(error => {
+                console.error('Error approving:', error);
+                alert('Error approving posts. Please try again.');
+            });
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
