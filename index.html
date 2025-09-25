@@ -38,6 +38,12 @@
             margin-bottom: 30px;
         }
 
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
         .tabs {
             display: flex;
             gap: 10px;
@@ -280,118 +286,124 @@
         <h1>LinkedIn Content Approval Dashboard</h1>
         <p class="subtitle">Preview and edit your AI-generated posts before publishing</p>
         
-        <div class="tabs">
-            <button class="tab-button active" onclick="switchTab('monday')">
-                Monday Post
-                <span id="monday-status" class="status-badge status-pending">Pending</span>
-            </button>
-            <button class="tab-button" onclick="switchTab('wednesday')">
-                Wednesday Post
-                <span id="wednesday-status" class="status-badge status-pending">Pending</span>
-            </button>
-            <button class="tab-button" onclick="switchTab('friday')">
-                Friday Post
-                <span id="friday-status" class="status-badge status-pending">Pending</span>
-            </button>
+        <div id="loading" class="loading">
+            Loading latest posts from Supabase...
         </div>
 
-        <!-- Monday Tab -->
-        <div id="monday-tab" class="tab-content active">
-            <div class="editor-preview-container">
-                <div class="editor-section">
-                    <h2 class="section-title">Edit Content</h2>
-                    <textarea id="monday-input" class="post-input" placeholder="Enter your LinkedIn post content here..."></textarea>
-                    <div id="monday-count" class="char-count">0 / 3000 characters</div>
-                </div>
-                
-                <div class="preview-section">
-                    <h2 class="section-title">LinkedIn Preview</h2>
-                    <div class="linkedin-preview">
-                        <div class="post-header">
-                            <div class="avatar">ZS</div>
-                            <div class="post-author">
-                                <div class="author-name">Zachary Stoll • 1st</div>
-                                <div class="author-title">Business Funding Specialist | Sales Strategist</div>
-                                <div class="author-title">Now • 🌐</div>
+        <div id="main-content" style="display: none;">
+            <div class="tabs">
+                <button class="tab-button active" onclick="switchTab('monday')">
+                    Monday Post
+                    <span id="monday-status" class="status-badge status-pending">Pending</span>
+                </button>
+                <button class="tab-button" onclick="switchTab('wednesday')">
+                    Wednesday Post
+                    <span id="wednesday-status" class="status-badge status-pending">Pending</span>
+                </button>
+                <button class="tab-button" onclick="switchTab('friday')">
+                    Friday Post
+                    <span id="friday-status" class="status-badge status-pending">Pending</span>
+                </button>
+            </div>
+
+            <!-- Monday Tab -->
+            <div id="monday-tab" class="tab-content active">
+                <div class="editor-preview-container">
+                    <div class="editor-section">
+                        <h2 class="section-title">Edit Content</h2>
+                        <textarea id="monday-input" class="post-input" placeholder="Loading content..."></textarea>
+                        <div id="monday-count" class="char-count">0 / 3000 characters</div>
+                    </div>
+                    
+                    <div class="preview-section">
+                        <h2 class="section-title">LinkedIn Preview</h2>
+                        <div class="linkedin-preview">
+                            <div class="post-header">
+                                <div class="avatar">ZS</div>
+                                <div class="post-author">
+                                    <div class="author-name">Zachary Stoll • 1st</div>
+                                    <div class="author-title">Business Funding Specialist | Sales Strategist</div>
+                                    <div class="author-title">Now • 🌎</div>
+                                </div>
                             </div>
+                            <div id="monday-preview" class="post-content"></div>
+                            <div class="post-stats">
+                                <span>👍 ❤️ 👏 42</span>
+                                <span>8 comments • 3 reposts</span>
+                            </div>
+                            <div class="engagement-bar"></div>
                         </div>
-                        <div id="monday-preview" class="post-content"></div>
-                        <div class="post-stats">
-                            <span>👍 ❤️ 👏 42</span>
-                            <span>8 comments • 3 reposts</span>
-                        </div>
-                        <div class="engagement-bar"></div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Wednesday Tab -->
-        <div id="wednesday-tab" class="tab-content">
-            <div class="editor-preview-container">
-                <div class="editor-section">
-                    <h2 class="section-title">Edit Content</h2>
-                    <textarea id="wednesday-input" class="post-input" placeholder="Enter your LinkedIn post content here..."></textarea>
-                    <div id="wednesday-count" class="char-count">0 / 3000 characters</div>
-                </div>
-                
-                <div class="preview-section">
-                    <h2 class="section-title">LinkedIn Preview</h2>
-                    <div class="linkedin-preview">
-                        <div class="post-header">
-                            <div class="avatar">ZS</div>
-                            <div class="post-author">
-                                <div class="author-name">Zachary Stoll • 1st</div>
-                                <div class="author-title">Business Funding Specialist | Sales Strategist</div>
-                                <div class="author-title">Now • 🌐</div>
+            <!-- Wednesday Tab -->
+            <div id="wednesday-tab" class="tab-content">
+                <div class="editor-preview-container">
+                    <div class="editor-section">
+                        <h2 class="section-title">Edit Content</h2>
+                        <textarea id="wednesday-input" class="post-input" placeholder="Loading content..."></textarea>
+                        <div id="wednesday-count" class="char-count">0 / 3000 characters</div>
+                    </div>
+                    
+                    <div class="preview-section">
+                        <h2 class="section-title">LinkedIn Preview</h2>
+                        <div class="linkedin-preview">
+                            <div class="post-header">
+                                <div class="avatar">ZS</div>
+                                <div class="post-author">
+                                    <div class="author-name">Zachary Stoll • 1st</div>
+                                    <div class="author-title">Business Funding Specialist | Sales Strategist</div>
+                                    <div class="author-title">Now • 🌎</div>
+                                </div>
                             </div>
+                            <div id="wednesday-preview" class="post-content"></div>
+                            <div class="post-stats">
+                                <span>👍 ❤️ 👏 42</span>
+                                <span>8 comments • 3 reposts</span>
+                            </div>
+                            <div class="engagement-bar"></div>
                         </div>
-                        <div id="wednesday-preview" class="post-content"></div>
-                        <div class="post-stats">
-                            <span>👍 ❤️ 👏 42</span>
-                            <span>8 comments • 3 reposts</span>
-                        </div>
-                        <div class="engagement-bar"></div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Friday Tab -->
-        <div id="friday-tab" class="tab-content">
-            <div class="editor-preview-container">
-                <div class="editor-section">
-                    <h2 class="section-title">Edit Content</h2>
-                    <textarea id="friday-input" class="post-input" placeholder="Enter your LinkedIn post content here..."></textarea>
-                    <div id="friday-count" class="char-count">0 / 3000 characters</div>
-                </div>
-                
-                <div class="preview-section">
-                    <h2 class="section-title">LinkedIn Preview</h2>
-                    <div class="linkedin-preview">
-                        <div class="post-header">
-                            <div class="avatar">ZS</div>
-                            <div class="post-author">
-                                <div class="author-name">Zachary Stoll • 1st</div>
-                                <div class="author-title">Business Funding Specialist | Sales Strategist</div>
-                                <div class="author-title">Now • 🌐</div>
+            <!-- Friday Tab -->
+            <div id="friday-tab" class="tab-content">
+                <div class="editor-preview-container">
+                    <div class="editor-section">
+                        <h2 class="section-title">Edit Content</h2>
+                        <textarea id="friday-input" class="post-input" placeholder="Loading content..."></textarea>
+                        <div id="friday-count" class="char-count">0 / 3000 characters</div>
+                    </div>
+                    
+                    <div class="preview-section">
+                        <h2 class="section-title">LinkedIn Preview</h2>
+                        <div class="linkedin-preview">
+                            <div class="post-header">
+                                <div class="avatar">ZS</div>
+                                <div class="post-author">
+                                    <div class="author-name">Zachary Stoll • 1st</div>
+                                    <div class="author-title">Business Funding Specialist | Sales Strategist</div>
+                                    <div class="author-title">Now • 🌎</div>
+                                </div>
                             </div>
+                            <div id="friday-preview" class="post-content"></div>
+                            <div class="post-stats">
+                                <span>👍 ❤️ 👏 42</span>
+                                <span>8 comments • 3 reposts</span>
+                            </div>
+                            <div class="engagement-bar"></div>
                         </div>
-                        <div id="friday-preview" class="post-content"></div>
-                        <div class="post-stats">
-                            <span>👍 ❤️ 👏 42</span>
-                            <span>8 comments • 3 reposts</span>
-                        </div>
-                        <div class="engagement-bar"></div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="action-buttons">
-            <button class="btn btn-secondary" onclick="copyCurrentPost()">Copy to Clipboard</button>
-            <button class="btn btn-primary" onclick="saveChanges()">Save Changes</button>
-            <button class="btn btn-success" onclick="approveAll()">Approve All Posts</button>
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="copyCurrentPost()">Copy to Clipboard</button>
+                <button class="btn btn-primary" onclick="saveChanges()">Save Changes</button>
+                <button class="btn btn-success" onclick="approveAll()">Approve All Posts</button>
+            </div>
         </div>
     </div>
 
@@ -399,69 +411,96 @@
         Post copied to clipboard!
     </div>
 
+    <!-- Supabase JavaScript Library -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script>
+        // Supabase credentials
+        const SUPABASE_URL = 'https://vgsidmstpjjzuppttuqlb.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnc2lkbXN0cGpqenVwcHR1cWxiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1MTQ3NDIsImV4cCI6MjA3MzA5MDc0Mn0.B6XZd3SEsVe3qL7rYuyNDiqRQA4QI7MnHsdBvl8hAyA';
+        
+        // Initialize Supabase client
+        const supabase = supabaseInit.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         let currentTab = 'monday';
-        const webhookUrl = 'https://tgrassmick.app.n8n.cloud/webhook/linkedin-content-updates';
-        
-        // Get URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const weekStart = urlParams.get('week') || new Date().toISOString();
-        const selectedDay = urlParams.get('day');
-        const encodedContent = urlParams.get('content');
+        let currentPostData = null;
 
-        // Initialize posts from localStorage first
-        let posts = {
-            monday: localStorage.getItem('monday-post') || '',
-            wednesday: localStorage.getItem('wednesday-post') || '',
-            friday: localStorage.getItem('friday-post') || ''
-        };
-
-        // If we have encoded content, decode and set it
-        if (encodedContent && selectedDay) {
+        // Load latest posts from Supabase
+        async function loadLatestPosts() {
             try {
-                // Use URL decode since we're using encodeURIComponent in n8n
-                const decodedContent = decodeURIComponent(encodedContent);
-                posts[selectedDay] = decodedContent;
-        
-                // Store in localStorage for persistence
-                localStorage.setItem(`${selectedDay}-post`, decodedContent);
-        
-                // Auto-switch to the specified day's tab after page loads
-                setTimeout(() => {
-                    const tabButtons = document.querySelectorAll('.tab-button');
-                    const tabIndex = selectedDay === 'monday' ? 0 : selectedDay === 'wednesday' ? 1 : 2;
-                    if (tabButtons[tabIndex]) {
-                    tabButtons[tabIndex].click();
-                    }
-                }, 100);
-            } catch (e) {
-                console.error('Error decoding content:', e);
+                const { data, error } = await supabase
+                    .from('linkedin_posts')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(1);
+
+                if (error) {
+                    console.error('Error loading posts:', error);
+                    showError('Error loading posts. Please refresh.');
+                    return;
+                }
+
+                if (data && data.length > 0) {
+                    currentPostData = data[0];
+                    populatePosts(currentPostData);
+                    hideLoading();
+                } else {
+                    showError('No posts found. Generate some content first!');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Connection error. Please check your credentials.');
             }
         }
 
-        // Initialize the editor
-        function init() {
-            ['monday', 'wednesday', 'friday'].forEach(day => {
+        // Hide loading and show main content
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+        }
+
+        // Show error message
+        function showError(message) {
+            document.getElementById('loading').innerHTML = `
+                <div style="color: #d11124;">
+                    ${message}
+                    <br><br>
+                    <button onclick="location.reload()" style="padding: 10px 20px; background: #0a66c2; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        Retry
+                    </button>
+                </div>
+            `;
+        }
+
+        // Populate the editor with post data
+        function populatePosts(postData) {
+            const days = ['monday', 'wednesday', 'friday'];
+            
+            days.forEach(day => {
                 const input = document.getElementById(`${day}-input`);
-                const preview = document.getElementById(`${day}-preview`);
-                const counter = document.getElementById(`${day}-count`);
+                const statusBadge = document.getElementById(`${day}-status`);
                 
-                // Set initial content from posts object
-                if (posts[day]) {
-                    input.value = posts[day];
-                }
-                
-                // Update preview immediately
-                updatePreview(day);
-                updateCharCount(day);
-                
-                // Add event listener for live updates
-                input.addEventListener('input', () => {
-                    posts[day] = input.value;
+                if (input && postData[`${day}_post`]) {
+                    input.value = postData[`${day}_post`] || '';
+                    
+                    // Update status
+                    if (postData.status === 'approved') {
+                        statusBadge.className = 'status-badge status-approved';
+                        statusBadge.textContent = 'Approved';
+                    } else {
+                        statusBadge.className = 'status-badge status-pending';
+                        statusBadge.textContent = 'Pending';
+                    }
+                    
+                    // Update preview and char count
                     updatePreview(day);
                     updateCharCount(day);
-                    localStorage.setItem(`${day}-post`, input.value);
-                });
+                    
+                    // Add event listeners
+                    input.addEventListener('input', () => {
+                        updatePreview(day);
+                        updateCharCount(day);
+                    });
+                }
             });
         }
 
@@ -469,6 +508,8 @@
         function updatePreview(day) {
             const input = document.getElementById(`${day}-input`);
             const preview = document.getElementById(`${day}-preview`);
+            if (!input || !preview) return;
+            
             let content = input.value;
             
             // Truncate for preview if over 210 characters
@@ -491,6 +532,8 @@
         function updateCharCount(day) {
             const input = document.getElementById(`${day}-input`);
             const counter = document.getElementById(`${day}-count`);
+            if (!input || !counter) return;
+            
             const count = input.value.length;
             
             counter.textContent = `${count} / 3000 characters`;
@@ -505,7 +548,6 @@
 
         // Switch between tabs
         function switchTab(day) {
-            // Update current tab
             currentTab = day;
             
             // Update tab buttons
@@ -518,80 +560,100 @@
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
-            document.getElementById(`${day}-tab`).classList.add('active');
+            const targetTab = document.getElementById(`${day}-tab`);
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
         }
 
         // Copy current post to clipboard
         function copyCurrentPost() {
             const input = document.getElementById(`${currentTab}-input`);
+            if (!input) return;
+            
             navigator.clipboard.writeText(input.value).then(() => {
                 const notification = document.getElementById('copy-notification');
                 notification.style.display = 'block';
                 setTimeout(() => {
                     notification.style.display = 'none';
                 }, 3000);
+            }).catch(err => {
+                console.error('Error copying to clipboard:', err);
+                alert('Unable to copy to clipboard');
             });
         }
 
-        // Save changes to n8n webhook
-        function saveChanges() {
-            const data = {
-                monday: posts.monday,
-                wednesday: posts.wednesday,
-                friday: posts.friday,
-                weekStart: weekStart,
-                timestamp: new Date().toISOString(),
-                action: 'save'
-            };
-            
-            // Send to n8n webhook
-            fetch(webhookUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            }).then(response => {
-                alert('Changes saved successfully!');
-            }).catch(error => {
-                console.error('Error saving:', error);
-                alert('Error saving changes. Please try again.');
-            });
+        // Save changes to Supabase
+        async function saveChanges() {
+            if (!currentPostData) {
+                alert('No post data found to save.');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase
+                    .from('linkedin_posts')
+                    .update({
+                        monday_post: document.getElementById('monday-input').value,
+                        wednesday_post: document.getElementById('wednesday-input').value,
+                        friday_post: document.getElementById('friday-input').value,
+                        status: 'edited'
+                    })
+                    .eq('id', currentPostData.id);
+
+                if (error) {
+                    console.error('Error saving changes:', error);
+                    alert('Error saving changes. Please try again.');
+                } else {
+                    alert('Changes saved successfully!');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Connection error. Please try again.');
+            }
         }
 
         // Approve all posts
-        function approveAll() {
-            ['monday', 'wednesday', 'friday'].forEach(day => {
-                document.getElementById(`${day}-status`).className = 'status-badge status-approved';
-                document.getElementById(`${day}-status`).textContent = 'Approved';
-            });
-            
-            const data = {
-                monday: posts.monday,
-                wednesday: posts.wednesday,
-                friday: posts.friday,
-                weekStart: weekStart,
-                timestamp: new Date().toISOString(),
-                action: 'approve'
-            };
-            
-            // Send approval to n8n
-            fetch(webhookUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            }).then(response => {
-                alert('All posts approved! They will be scheduled for publishing.');
-            }).catch(error => {
-                console.error('Error approving:', error);
-                alert('Error approving posts. Please try again.');
-            });
+        async function approveAll() {
+            if (!currentPostData) {
+                alert('No post data found to approve.');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase
+                    .from('linkedin_posts')
+                    .update({
+                        monday_post: document.getElementById('monday-input').value,
+                        wednesday_post: document.getElementById('wednesday-input').value,
+                        friday_post: document.getElementById('friday-input').value,
+                        status: 'approved',
+                        approved_at: new Date().toISOString()
+                    })
+                    .eq('id', currentPostData.id);
+
+                if (error) {
+                    console.error('Error approving posts:', error);
+                    alert('Error approving posts. Please try again.');
+                } else {
+                    // Update UI
+                    ['monday', 'wednesday', 'friday'].forEach(day => {
+                        const statusBadge = document.getElementById(`${day}-status`);
+                        statusBadge.className = 'status-badge status-approved';
+                        statusBadge.textContent = 'Approved';
+                    });
+                    alert('All posts approved! They are ready for publishing.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Connection error. Please try again.');
+            }
         }
 
         // Initialize on page load
-        window.addEventListener('DOMContentLoaded', init);
+        window.addEventListener('DOMContentLoaded', () => {
+            loadLatestPosts();
+        });
     </script>
 </body>
 </html>
